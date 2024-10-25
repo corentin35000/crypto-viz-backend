@@ -24,7 +24,7 @@ Ce projet est structuré en quatre dépôts distincts pour assurer une modularit
 
 2. `crypto-viz-scraper` <br />
    Rôle : Service de collecte de données en temps réel depuis un flux d’actualités sur les cryptomonnaies. <br />
-   Technologies : Utilise Node.js ou Python avec des outils de scraping comme Puppeteer (Node.js) ou BeautifulSoup (Python). <br />
+   Technologies : Utilise Go avec la librairie Colly, avantages pour gérer un grand nombre de requêtes simultanément grâce au parallélisme et au multitraitement + optimiser la mémoire et les performances de manière très efficace, particulièrement utile pour les scrapers intensifs (donc meilleur que des librairie avec Node.js et Python)
    Responsabilité : Il suit le modèle producteur/consommateur pour transmettre les données au broker de messages (crypto-viz-broker) dès qu'elles sont collectées. Ce composant est toujours actif pour assurer un flux continu de données.
    <br />
 

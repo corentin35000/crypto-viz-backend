@@ -13,30 +13,31 @@
 <br /><br /><br /><br />
 
 ## 🏗️ Architecture de l'Application / Infrastructure
+
 Ce projet est structuré en quatre dépôts distincts pour assurer une modularité et une scalabilité maximales. Chaque dépôt est un microservice indépendant, permettant des mises à jour, des tests et un déploiement en continu pour chaque composant sans affecter les autres parties de l'application. Cette approche suit une architecture orientée microservices pour optimiser la flexibilité et la maintenabilité. <br /><br />
 
 1. `crypto-viz-frontend` <br />
-Rôle : Ce dépôt contient le code pour l'interface utilisateur (UI) de l'application. Il permet aux utilisateurs finaux de visualiser les données et les analyses en temps réel. <br />
-Technologies : Développé avec Nuxt et TypeScript, le frontend utilise des librairies de visualisation (comme D3.js ou Chart.js) pour représenter les analyses de données avec une dimension temporelle. <br />
-Responsabilité : Ce service consomme l'API fournie par crypto-viz-backend pour afficher les graphiques et les données mises à jour.
-<br />
+   Rôle : Ce dépôt contient le code pour l'interface utilisateur (UI) de l'application. Il permet aux utilisateurs finaux de visualiser les données et les analyses en temps réel. <br />
+   Technologies : Développé avec Nuxt et TypeScript, le frontend utilise des librairies de visualisation (comme D3.js ou Chart.js) pour représenter les analyses de données avec une dimension temporelle. <br />
+   Responsabilité : Ce service consomme l'API fournie par crypto-viz-backend pour afficher les graphiques et les données mises à jour.
+   <br />
 
 2. `crypto-viz-scraper` <br />
-Rôle : Service de collecte de données en temps réel depuis un flux d’actualités sur les cryptomonnaies. <br />
-Technologies : Utilise Node.js ou Python avec des outils de scraping comme Puppeteer (Node.js) ou BeautifulSoup (Python). <br />
-Responsabilité : Il suit le modèle producteur/consommateur pour transmettre les données au broker de messages (crypto-viz-broker) dès qu'elles sont collectées. Ce composant est toujours actif pour assurer un flux continu de données.
-<br />
+   Rôle : Service de collecte de données en temps réel depuis un flux d’actualités sur les cryptomonnaies. <br />
+   Technologies : Utilise Node.js ou Python avec des outils de scraping comme Puppeteer (Node.js) ou BeautifulSoup (Python). <br />
+   Responsabilité : Il suit le modèle producteur/consommateur pour transmettre les données au broker de messages (crypto-viz-broker) dès qu'elles sont collectées. Ce composant est toujours actif pour assurer un flux continu de données.
+   <br />
 
 3. `crypto-viz-backend` <br />
-Rôle : Service d’analyse des données collectées, qui traite et transforme les données reçues pour générer des analyses exploitables par le frontend. <br />
-Technologies : Construit avec un framework backend avec AdonisJS. <br />
-Responsabilité : Le backend consomme les données via crypto-viz-broker, les analyse, et expose les résultats sous forme d’API pour le frontend. Ce service est en charge de la logique métier et du traitement des données pour en faire des insights significatifs.
-<br />
- 
+   Rôle : Service d’analyse des données collectées, qui traite et transforme les données reçues pour générer des analyses exploitables par le frontend. <br />
+   Technologies : Construit avec un framework backend avec AdonisJS. <br />
+   Responsabilité : Le backend consomme les données via crypto-viz-broker, les analyse, et expose les résultats sous forme d’API pour le frontend. Ce service est en charge de la logique métier et du traitement des données pour en faire des insights significatifs.
+   <br />
+
 4. `crypto-viz-broker` <br />
-Rôle : Ce composant est le broker de messages et gère la communication entre le scraper, le backend, et le frontend. <br />
-Technologies : Utilisation de NATS comme système de gestion de messages. <br />
-Responsabilité : Assure le transfert efficace et en temps réel des messages entre le scraper (producteur de données) et le backend (consommateur/analyste des données). Il permet la scalabilité de l'application en découplant les composants.
+   Rôle : Ce composant est le broker de messages et gère la communication entre le scraper, le backend, et le frontend. <br />
+   Technologies : Utilisation de NATS comme système de gestion de messages. <br />
+   Responsabilité : Assure le transfert efficace et en temps réel des messages entre le scraper (producteur de données) et le backend (consommateur/analyste des données). Il permet la scalabilité de l'application en découplant les composants.
 
 <br /><br /><br /><br />
 
@@ -60,6 +61,7 @@ git commit --allow-empty -m "chore: release 1.1.0-rc.0" -m "Release-As: 1.1.0-rc
 <br /><br /><br /><br />
 
 ## 🚀 Conventions de Commit
+
 Nous utilisons les conventions de commit pour maintenir une cohérence dans l'historique du code et faciliter le versionnement automatique avec release-please. Voici les types de commits que nous utilisons, ainsi que leur impact sur le versionnage :
 
 - feat : Introduction d'une nouvelle fonctionnalité pour l'utilisateur. Entraîne une augmentation de la version mineure (par exemple, de 1.0.0 à 1.1.0).

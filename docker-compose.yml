@@ -1,7 +1,7 @@
 services:
   adonis:
     container_name: adonis
-    image: flapi/backend:develop
+    image: cryptoviz/backend:develop
     restart: always
     build:
       context: .

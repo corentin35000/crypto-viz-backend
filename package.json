@@ -58,7 +58,7 @@
     "pino-pretty": "^11.3.0",
     "prettier": "^3.3.3",
     "ts-node-maintained": "^10.9.4",
-    "typescript": "~5.5.0"
+    "typescript": "~5.6.3"
   },
   "hotHook": {
     "boundaries": [

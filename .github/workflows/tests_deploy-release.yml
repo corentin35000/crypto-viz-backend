@@ -1,0 +1,41 @@
+name: tests_deploy-release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  tests_deploy-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js to latest version LTS and setup cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies for project
+        run: npm install --ignore-scripts
+
+      - name: Lint TypeScript and ESLint for project
+        run: npm run lint:ts && npm run lint:eslint
+
+      - name: Run Unit and Functional tests for project
+        run: npm run test:staging-prod
+
+      - name: Deploy PR (main) for new Release
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: node
+          target-branch: main
+          config-file: 'release-please-config.json'
+          token: ${{ secrets.GITHUB_TOKEN }}

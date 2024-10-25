@@ -1,4 +1,4 @@
-# Flapi - StarterKit BackEnd
+# Crypto Viz - Backend
 
 ## 🛠 Tech Stack
 
@@ -109,7 +109,7 @@ Pour plus de détails sur les conventions de commit, consultez : [Conventional C
 1. Clone the project repository using the following commands :
 
 ```bash
-git clone git@github.com:corentin35000/crypto-viz-back-end.git
+git clone git@github.com:corentin35000/crypto-viz-backend.git
 ```
 
 2. Steps by Platform :

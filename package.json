@@ -45,7 +45,7 @@
     "@swc/core": "^1.7.39",
     "@types/luxon": "^3.4.2",
     "@types/node": "^22.7.9",
-    "@typescript-eslint/eslint-plugin": "^8.11.0",
+    "@typescript-eslint/eslint-plugin": "^8.12.1",
     "@typescript-eslint/parser": "^8.11.0",
     "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",

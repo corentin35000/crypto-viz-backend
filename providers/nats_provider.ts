@@ -40,6 +40,10 @@ export default class NatsProvider {
   public async ready(): Promise<void> {
     const natsService: NatsService = await this.app.container.make('#services/nats_service')
     await natsService.connect()
+    
+    natsService.subscribe('crypto.news', (message: string) => {
+      console.log('Received message:', message)
+    })
   }
 
   /**

@@ -1,5 +1,6 @@
 import type { ApplicationService } from '@adonisjs/core/types'
 import NatsService from '#services/nats_service'
+import CryptoNewsService from '#services/cryptonews_service'
 
 /**
  * NatsProvider registers and manages the NatsService lifecycle within the AdonisJS application.
@@ -18,6 +19,9 @@ export default class NatsProvider {
   public register(): void {
     this.app.container.singleton('#services/nats_service', () => {
       return new NatsService()
+    })
+    this.app.container.singleton('#services/cryptonews_service', () => {
+      return new CryptoNewsService()
     })
   }
 
@@ -39,10 +43,17 @@ export default class NatsProvider {
    */
   public async ready(): Promise<void> {
     const natsService: NatsService = await this.app.container.make('#services/nats_service')
+    const cryptoNewsService: CryptoNewsService = await this.app.container.make('#services/cryptonews_service')
+
     await natsService.connect()
-    
     natsService.subscribe('crypto.news', (message: string) => {
-      console.log('Received message:', message)
+      ;(async (): Promise<void> => {
+        try {
+          await cryptoNewsService.callbackBrokerMessageForNews(message)
+        } catch (error) {
+          console.error('Error processing news:', error)
+        }
+      })()
     })
   }
 

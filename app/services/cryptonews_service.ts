@@ -22,7 +22,7 @@ export default class CryptoNewsService {
    * @param {string} message - The JSON string containing news data.
    * @returns {Promise<void>}
    */
-  public async callbackBrokerMessageForNews(message: string): Promise<void> {
+  public static async callbackBrokerMessageForNews(message: string): Promise<void> {
     const news: News = JSON.parse(message)
     logger.info(`Received news: \n title: ${news.title} \n content: ${news.content} \n link: ${news.link}`)
     await this.saveNews(news)
@@ -33,7 +33,7 @@ export default class CryptoNewsService {
    * @param {News} _news - The news object containing title and content.
    * @returns {Promise<void>}
    */
-  private async saveNews(_news: News): Promise<void> {
+  private static async saveNews(_news: News): Promise<void> {
     // Implémentez la logique de sauvegarde ici
   }
 }

@@ -20,9 +20,6 @@ export default class NatsProvider {
     this.app.container.singleton('#services/nats_service', () => {
       return new NatsService()
     })
-    this.app.container.singleton('#services/cryptonews_service', () => {
-      return new CryptoNewsService()
-    })
   }
 
   /**
@@ -43,13 +40,12 @@ export default class NatsProvider {
    */
   public async ready(): Promise<void> {
     const natsService: NatsService = await this.app.container.make('#services/nats_service')
-    const cryptoNewsService: CryptoNewsService = await this.app.container.make('#services/cryptonews_service')
-
     await natsService.connect()
+
     natsService.subscribe('crypto.news', (message: string) => {
       ;(async (): Promise<void> => {
         try {
-          await cryptoNewsService.callbackBrokerMessageForNews(message)
+          await CryptoNewsService.callbackBrokerMessageForNews(message)
         } catch (error) {
           console.error('Error processing news:', error)
         }

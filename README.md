@@ -12,32 +12,65 @@
 
 <br /><br /><br /><br />
 
-## 🏗️ Architecture de l'Application / Infrastructure
+## 🏗️ Architecture de l'Application
 
-Ce projet est structuré en quatre dépôts distincts pour assurer une modularité et une scalabilité maximales. Chaque dépôt est un microservice indépendant, permettant des mises à jour, des tests et un déploiement en continu pour chaque composant sans affecter les autres parties de l'application. Cette approche suit une architecture orientée microservices pour optimiser la flexibilité et la maintenabilité. <br /><br />
+Ce projet est structuré en quatre dépôts distincts, chacun jouant un rôle essentiel dans la collecte, le traitement et la visualisation des données. En suivant une architecture microservices, chaque dépôt est un composant indépendant, permettant une flexibilité et une maintenabilité optimales. Cette architecture modulaire permet également des mises à jour, des tests et des déploiements continus sans interférer avec les autres parties de l'application.
 
-1. `crypto-viz-frontend` <br />
-   Rôle : Ce dépôt contient le code pour l'interface utilisateur (UI) de l'application. Il permet aux utilisateurs finaux de visualiser les données et les analyses en temps réel. <br />
-   Technologies : Développé avec Nuxt et TypeScript, le frontend utilise des librairies de visualisation (comme D3.js ou Chart.js) pour représenter les analyses de données avec une dimension temporelle. <br />
-   Responsabilité : Ce service consomme l'API fournie par crypto-viz-backend pour afficher les graphiques et les données mises à jour.
-   <br />
+<br />
 
-2. `crypto-viz-scraper` <br />
-   Rôle : Service de collecte de données en temps réel depuis un flux d’actualités sur les cryptomonnaies. <br />
-   Technologies : Utilise Go avec la librairie Colly, avantages pour gérer un grand nombre de requêtes simultanément grâce au parallélisme et au multitraitement + optimiser la mémoire et les performances de manière très efficace, particulièrement utile pour les scrapers intensifs (donc meilleur que des librairie avec Node.js et Python)
-   Responsabilité : Il suit le modèle producteur/consommateur pour transmettre les données au broker de messages (crypto-viz-broker) dès qu'elles sont collectées. Ce composant est toujours actif pour assurer un flux continu de données.
-   <br />
+### Schéma d’Architecture
 
-3. `crypto-viz-backend` <br />
-   Rôle : Service d’analyse des données collectées, qui traite et transforme les données reçues pour générer des analyses exploitables par le frontend. <br />
-   Technologies : Construit avec un framework backend avec AdonisJS. <br />
-   Responsabilité : Le backend consomme les données via crypto-viz-broker, les analyse, et expose les résultats sous forme d’API pour le frontend. Ce service est en charge de la logique métier et du traitement des données pour en faire des insights significatifs.
-   <br />
+![Schéma d’architecture du projet Crypto Viz](crypto-viz-architecture.png)
 
-4. `crypto-viz-broker` <br />
-   Rôle : Ce composant est le broker de messages et gère la communication entre le scraper, le backend, et le frontend. <br />
-   Technologies : Utilisation de NATS comme système de gestion de messages. <br />
-   Responsabilité : Assure le transfert efficace et en temps réel des messages entre le scraper (producteur de données) et le backend (consommateur/analyste des données). Il permet la scalabilité de l'application en découplant les composants.
+<br />
+
+### Composants et Responsabilités
+
+#### 1. Frontend : `crypto-viz-frontend`
+- **Rôle** : Fournit l'interface utilisateur (UI) pour visualiser en temps réel les données et analyses relatives aux cryptomonnaies.
+- **Technologies** : Développé avec **Nuxt** et **TypeScript**, il intègre des bibliothèques de visualisation comme **D3.js** ou **Chart.js** pour afficher les données en prenant en compte leur dimension temporelle.
+- **Responsabilité** : Le frontend consomme deux sources de données :
+  - Les API du backend pour obtenir les données de marché et les analyses.
+  - Le broker de messages pour recevoir les actualités filtrées du backend en temps réel.
+
+#### 2. Scraper : `crypto-viz-scraper`
+- **Rôle** : Ce composant se charge de collecter en temps réel les informations depuis un flux d'actualités sur les cryptomonnaies.
+- **Technologies** : Construit en **Go** avec la bibliothèque **Colly**, qui permet de gérer efficacement un nombre important de requêtes simultanées grâce au parallélisme et à la gestion de la mémoire, en offrant de meilleures performances pour les scrapers intensifs.
+- **Responsabilité** : Ce service fonctionne en continu et publie les actualités recueillies sur le broker de messages (`crypto-viz-broker`). En tant que producteur dans le modèle producteur/consommateur, il assure un flux constant de données.
+
+#### 3. Backend : `crypto-viz-backend`
+- **Rôle** : Analyse les données collectées par le scraper, filtre les informations pertinentes et les transforme pour les rendre exploitables par le frontend.
+- **Technologies** : Construit avec **AdonisJS**, un framework backend offrant une structure complète pour la gestion des APIs et la logique métier.
+- **Responsabilité** : 
+  - Consomme les données via le broker de messages, filtre et enrichit les actualités pour créer des insights exploitables.
+  - Publie les actualités filtrées sur un sujet dédié pour le frontend.
+  - Expose des API HTTP permettant de récupérer les informations de marché, pour lesquelles il interroge directement des APIs externes de données financières.
+
+#### 4. Broker : `crypto-viz-broker`
+- **Rôle** : Assure la communication entre le scraper, le backend, et le frontend en utilisant un système de messages.
+- **Technologies** : Utilise **NATS** comme broker de messages, permettant une gestion performante et asynchrone des flux de données.
+- **Responsabilité** : 
+  - Gère la distribution des messages entre les services en maintenant un flux de données continu entre les composants.
+  - Permet au scraper de publier des messages de manière indépendante, que le backend peut consommer et analyser.
+  - Facilite la scalabilité en permettant d'ajouter des instances supplémentaires de chaque composant sans créer de dépendances directes.
+
+<br />
+
+### Déroulement des Données et Interactions
+
+1. Le **scraper** publie les dernières actualités sur le sujet `crypto.news` du broker.
+2. Le **backend** souscrit au sujet `crypto.news`, filtre et traite les informations, puis publie les actualités filtrées et enrichies sur un nouveau sujet `crypto.news.filtered`.
+3. Le **frontend** souscrit au sujet `crypto.news.filtered` pour obtenir en temps réel les informations actualisées.
+4. Pour les données de marché, le **frontend** interroge directement le backend via des appels HTTP, qui utilise des APIs externes pour récupérer les informations les plus récentes.
+
+<br />
+
+### Avantages de cette Architecture
+
+- **Indépendance des Composants** : Chaque service est autonome et peut être mis à jour, redémarré ou mis à l’échelle indépendamment.
+- **Scalabilité** : Le broker de messages permet d’ajouter des instances supplémentaires de chaque service pour gérer une charge accrue sans modification de l'architecture.
+- **Temps Réel** : Le modèle producteur/consommateur via NATS permet des communications en temps réel, assurant que les utilisateurs disposent toujours des données les plus récentes.
+- **Flexibilité** : La séparation des responsabilités permet d'ajuster ou de remplacer un composant sans perturber le reste du système.
 
 <br /><br /><br /><br />
 

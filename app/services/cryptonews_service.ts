@@ -6,7 +6,7 @@ import logger from '@adonisjs/core/services/logger'
  * @property {string} content - The content of the news.
  * @property {string} link - The link to the news.
  */
-type News = {
+export type News = {
   title: string
   content: string
   link: string
@@ -16,16 +16,33 @@ type News = {
  * @class CryptoNewsService
  * This class handles incoming news messages and saves the news.
  */
-export default class CryptoNewsService {
+export class CryptoNewsService {
   /**
    * Handles incoming news messages and saves the news.
    * @param {string} message - The JSON string containing news data.
    * @returns {Promise<void>}
    */
-  public static async callbackBrokerMessageForNews(message: string): Promise<void> {
+  public static async callbackBrokerMessageForNews(message: string): Promise<News> {
     const news: News = JSON.parse(message)
     logger.info(`Received news: \n title: ${news.title} \n content: ${news.content} \n link: ${news.link}`)
-    await this.saveNews(news)
+    const filteredNews: News = this.filterNews(news)
+    await this.saveNews(filteredNews)
+    return filteredNews
+  }
+
+  /**
+   * Filters the news object to only include the title, content, and link.
+   * @param {News} news - The news object containing title, content, and link.
+   * @returns {News} - The filtered news object.
+   */
+  private static filterNews(news: News): News {
+    // Implémentez la logique de filtrage ici qui permet de nettoyer les données reçu du broker
+    // pour avoir des données plus propre
+    return {
+      title: news.title,
+      content: news.content,
+      link: news.link,
+    } as News
   }
 
   /**
@@ -34,6 +51,6 @@ export default class CryptoNewsService {
    * @returns {Promise<void>}
    */
   private static async saveNews(_news: News): Promise<void> {
-    // Implémentez la logique de sauvegarde ici
+    // Implémentez la logique de sauvegarde ici qui permet lorsqu'ont arrive sur le site de fetch tout les news crypto 
   }
 }

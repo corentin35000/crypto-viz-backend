@@ -6,11 +6,13 @@ import logger from '@adonisjs/core/services/logger'
  * @property {string} title - The title of the news.
  * @property {string} content - The content of the news.
  * @property {string} link - The link to the news.
+ * @property {string} image - The image of the news.
  */
 export type NewsReceived = {
   title: string
   content: string
-  link: string
+  link?: string
+  image?: string
 }
 
 /**
@@ -35,11 +37,10 @@ export class CryptoNewsService {
    */
   public static async callbackBrokerMessageForNews(message: string): Promise<NewsFiltered> {
     const newsReceived: NewsReceived = JSON.parse(message)
-    logger.info(
-      `Received news: \n title: ${newsReceived.title} \n content: ${newsReceived.content} \n link: ${newsReceived.link}`,
-    )
-    const newsFiltered: NewsReceived = this.filterNews(newsReceived)
-    return await this.saveNews(newsFiltered)
+    /*logger.info(
+      `Received news: \n title: ${newsReceived.title} \n content: ${newsReceived.content} \n link: ${newsReceived.link} \n image: ${newsReceived.image}`,
+    )*/
+    return await this.saveNews(newsReceived)
   }
 
   /**
@@ -48,20 +49,6 @@ export class CryptoNewsService {
    */
   public static async getAllNews(): Promise<News[]> {
     return await News.all()
-  }
-
-  /**
-   * Filters the news object to only include the title, content, and link.
-   * @param {News} news - The news object containing title, content, and link.
-   * @returns {News} - The filtered news object.
-   */
-  private static filterNews(news: NewsReceived): NewsReceived {
-    // Implémentez la logique de filtrage ici qui permet de nettoyer les données reçu du broker pour avoir des données plus propre
-    return {
-      title: news.title,
-      content: news.content,
-      link: news.link,
-    } as NewsReceived
   }
 
   /**
@@ -74,17 +61,21 @@ export class CryptoNewsService {
     const titleExist: News | null = await News.findBy('title', news.title)
 
     if (contentExist || titleExist) {
+      logger.info('News already exists')
       return {
         news: null,
         isExist: true,
       }
     } else {
+      logger.info('News does not exist')
+      const newsSaved: News = await News.create({
+        title: news.title,
+        content: news.content,
+        link: news.link,
+        image: news.image,
+      })
       return {
-        news: await News.create({
-          title: news.title,
-          content: news.content,
-          link: news.link,
-        }),
+        news: newsSaved,
         isExist: false,
       }
     }

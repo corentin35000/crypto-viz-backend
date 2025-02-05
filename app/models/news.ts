@@ -30,6 +30,12 @@ export default class News extends BaseModel {
   public declare link: string | null
 
   /**
+   * Image de la news
+   */
+  @column()
+  public declare image: string | null
+
+  /**
    * Date de création
    */
   @column.dateTime({ autoCreate: true })

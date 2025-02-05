@@ -1,7 +1,7 @@
 import type { ApplicationService } from '@adonisjs/core/types'
 import NatsService from '#services/nats_service'
 import { CryptoNewsService } from '#services/cryptonews_service'
-import type { News } from '#services/cryptonews_service'
+import type News from '#models/news'
 
 /**
  * NatsProvider registers and manages the NatsService lifecycle within the AdonisJS application.
@@ -18,6 +18,7 @@ export default class NatsProvider {
    * @returns {void}
    */
   public register(): void {
+    // @ts-ignore
     this.app.container.singleton('#services/nats_service', () => {
       return new NatsService()
     })

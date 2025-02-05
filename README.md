@@ -27,6 +27,7 @@ Ce projet est structuré en quatre dépôts distincts, chacun jouant un rôle es
 ### Composants et Responsabilités
 
 #### 1. Frontend : `crypto-viz-frontend`
+
 - **Rôle** : Fournit l'interface utilisateur (UI) pour visualiser en temps réel les données et analyses relatives aux cryptomonnaies.
 - **Technologies** : Développé avec **Nuxt** et **TypeScript**, il intègre des bibliothèques de visualisation comme **D3.js** ou **Chart.js** pour afficher les données en prenant en compte leur dimension temporelle.
 - **Responsabilité** : Le frontend consomme deux sources de données :
@@ -34,22 +35,25 @@ Ce projet est structuré en quatre dépôts distincts, chacun jouant un rôle es
   - Le broker de messages pour recevoir les actualités filtrées du backend en temps réel.
 
 #### 2. Scraper : `crypto-viz-scraper`
+
 - **Rôle** : Ce composant se charge de collecter en temps réel les informations depuis un flux d'actualités sur les cryptomonnaies.
 - **Technologies** : Construit en **Go** avec la bibliothèque **Colly**, qui permet de gérer efficacement un nombre important de requêtes simultanées grâce au parallélisme et à la gestion de la mémoire, en offrant de meilleures performances pour les scrapers intensifs.
 - **Responsabilité** : Ce service fonctionne en continu et publie les actualités recueillies sur le broker de messages (`crypto-viz-broker`). En tant que producteur dans le modèle producteur/consommateur, il assure un flux constant de données.
 
 #### 3. Backend : `crypto-viz-backend`
+
 - **Rôle** : Analyse les données collectées par le scraper, filtre les informations pertinentes et les transforme pour les rendre exploitables par le frontend.
 - **Technologies** : Construit avec **AdonisJS**, un framework backend offrant une structure complète pour la gestion des APIs et la logique métier.
-- **Responsabilité** : 
+- **Responsabilité** :
   - Consomme les données via le broker de messages, filtre et enrichit les actualités pour créer des insights exploitables.
   - Publie les actualités filtrées sur un sujet dédié pour le frontend.
   - Expose des API HTTP permettant de récupérer les informations de marché, pour lesquelles il interroge directement des APIs externes de données financières.
 
 #### 4. Broker : `crypto-viz-broker`
+
 - **Rôle** : Assure la communication entre le scraper, le backend, et le frontend en utilisant un système de messages.
 - **Technologies** : Utilise **NATS** comme broker de messages, permettant une gestion performante et asynchrone des flux de données.
-- **Responsabilité** : 
+- **Responsabilité** :
   - Gère la distribution des messages entre les services en maintenant un flux de données continu entre les composants.
   - Permet au scraper de publier des messages de manière indépendante, que le backend peut consommer et analyser.
   - Facilite la scalabilité en permettant d'ajouter des instances supplémentaires de chaque composant sans créer de dépendances directes.

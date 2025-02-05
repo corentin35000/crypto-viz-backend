@@ -11,7 +11,6 @@ COPY . .
 
 ENV CHOKIDAR_USEPOLLING=true
 
-# Run migrations, seed data, and start the app
-CMD npm run db:migration:develop && \
-    npm run db:seed && \
+# Delete database, Run migrations, Run seed data, and start the app
+CMD npm run db:fresh && \
     npm run dev

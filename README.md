@@ -67,7 +67,7 @@ Ce projet est structuré en quatre dépôts distincts, chacun jouant un rôle es
 2. Le **backend** souscrit au sujet `crypto.news`, filtre et traite les informations, puis publie les actualités filtrées et enrichies sur un nouveau sujet `crypto.news.filtered`.
 3. Le **frontend** souscrit au sujet `crypto.news.filtered` pour obtenir en temps réel les informations actualisées.
 4. Pour les données de marché, le **frontend** interroge directement les plateformes du marché via des appels HTTP.
-   
+
 <br />
 
 ### Avantages de cette Architecture
